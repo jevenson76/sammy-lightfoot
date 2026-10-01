@@ -49,6 +49,19 @@ and the scenes repeat harder; levels run 0 to 11 and then loop from 6.
    once to catch the second, then drop onto the pumpkin's platform. Two swings in every four
    line up for the transfer.
 
+### Desktop icon (Windows)
+
+```
+npm run desktop
+```
+
+run from WSL builds the game into one self-contained HTML file (`npm run build`, no server
+needed), copies it and an icon to `%LOCALAPPDATA%\SammyLightfoot\`, and puts a
+"Sammy Lightfoot" shortcut on the desktop that opens it in its own Edge app window. Re-run it
+after changing the game to refresh the installed copy. To remove: delete the shortcut and that
+folder. High scores for the desktop copy live in Edge's storage for that file, separate from
+the `npx serve` copy.
+
 ### Extras
 
 - `?scene=2&level=3` starts at that scene and level.
@@ -68,12 +81,14 @@ and the scenes repeat harder; levels run 0 to 11 and then loop from 6.
 | `tests/` | `node --test`. Logic tests derive their expectations from the tuning tables. `routes.test.mjs` is the bot regression gate. |
 | `tools/bots.mjs` | Scripted players: a look-ahead planner (with a "slack demanded" and "lateness" setting) and a button-masher. |
 | `tools/simulate.mjs` | Headless reports: per-scene clear rates (`--levels`, `--seeds`, `--models`), rope timing windows (`--windows`), whole games (`--session`), one attempt step by step (`--trace`). |
-| `tools/smoke.mjs` | Playwright: loads the page, plays with real key events, lets the bot clear all three scenes, saves screenshots to `shots/`. |
+| `tools/smoke.mjs` | Playwright: loads the page, plays with real key events, lets the bot clear all three scenes, loads the single-file build from `file://`, saves screenshots to `shots/`. |
+| `tools/build-single.mjs` | Packs everything into `dist/sammy-lightfoot.html` (a small bundler for this codebase's import/export style; no dependencies). |
+| `tools/make-icon.mjs`, `tools/install-desktop.mjs` | Draw the `.ico` from Sammy's sprite; install the game and a desktop shortcut on Windows. |
 
 ## How it was checked
 
 ```
-node --test              # 114 tests, about 25 s
+node --test              # 125 tests, about 25 s
 node tools/simulate.mjs  # player-model report, about 40 s
 node tools/smoke.mjs     # real browser, screenshots in shots/
 ```

@@ -1,4 +1,5 @@
 shots/
+dist/
 node_modules/
 core
 core.*

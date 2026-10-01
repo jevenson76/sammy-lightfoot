@@ -2,16 +2,18 @@
  * Headless browser smoke test (dev-only; needs playwright resolvable from an
  * ancestor node_modules). Serves the game on a throwaway local server, starts
  * a game, visits all three scenes, dies once, then lets the planner bot play
- * the real page through all three scenes, saving screenshots along the way.
+ * the real page through all three scenes, then loads the single-file build
+ * from file://, saving screenshots along the way.
  * Exits non-zero on any console/page error or failed expectation.
  *
  * Usage: node tools/smoke.mjs        (screenshots land in shots/, or SMOKE_OUT)
  */
 import { createServer } from 'node:http';
-import { readFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { chromium } from 'playwright';
+import { buildSingleFile } from './build-single.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const OUT = process.env.SMOKE_OUT || join(root, 'shots');
@@ -158,6 +160,19 @@ try {
   expect(s.lives === 4, `demo: without losing a life (lives ${s.lives})`);
   expect(s.score > 20000, `demo: and banks three bonuses (score ${s.score})`);
   expect(seen.size === wanted.length, `demo: saw every set piece (${[...seen].length}/${wanted.length})`);
+
+  // The single-file build (what the desktop icon opens) must run from file://, with no server.
+  await mkdir(join(root, 'dist'), { recursive: true });
+  const single = join(root, 'dist', 'sammy-lightfoot.html');
+  await writeFile(single, buildSingleFile());
+  await page.goto(`${pathToFileURL(single).href}?debug=1&demo=planner&speed=4`);
+  await page.waitForFunction(() => window.__sammy && window.__sammy.game, null, { timeout: 10000 });
+  await page.waitForFunction(() => window.__sammy.game.scene >= 1, null, { timeout: 40000 });
+  s = await state();
+  expect(s.scene >= 1 && s.lives === 4 && s.score > 8000, `single file from file://: boots and the bot clears scene 1 (score ${s.score})`);
+  const stored = await page.evaluate(() => { try { localStorage.setItem('sammy-probe', '1'); const ok = localStorage.getItem('sammy-probe') === '1'; localStorage.removeItem('sammy-probe'); return ok; } catch { return false; } });
+  expect(stored, 'single file from file://: high scores can be saved (localStorage works)');
+  await shot('14-single-file');
 
   expect(errors.length === 0, `no console or page errors${errors.length ? `: ${errors.join(' | ')}` : ''}`);
 } catch (e) {

@@ -8,6 +8,8 @@
     "serve": "npx serve .",
     "test": "node --test",
     "sim": "node tools/simulate.mjs",
-    "smoke": "node tools/smoke.mjs"
+    "smoke": "node tools/smoke.mjs",
+    "build": "node tools/build-single.mjs",
+    "desktop": "node tools/install-desktop.mjs"
   }
 }
