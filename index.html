@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Sammy Lightfoot</title>
+<style>
+  html, body { height: 100%; margin: 0; background: #000; overflow: hidden; }
+  body {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font: 12px/1.4 ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace; color: #6a6a6a;
+    touch-action: none; -webkit-user-select: none; user-select: none;
+  }
+  canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; background: #000; }
+  .note { margin-top: 6px; }
+  .pad { display: none; position: fixed; bottom: max(12px, env(safe-area-inset-bottom)); left: 0; right: 0; padding: 0 14px; justify-content: space-between; pointer-events: none; }
+  .pad div { display: flex; gap: 10px; }
+  .pad button {
+    pointer-events: auto; width: 68px; height: 68px; border-radius: 50%;
+    border: 2px solid #14cffd; background: rgba(20, 207, 253, 0.12); color: #fff;
+    font: bold 15px ui-monospace, Menlo, Consolas, monospace; touch-action: none;
+  }
+  .pad button.jump { width: 88px; height: 88px; border-color: #ff6a3c; background: rgba(255, 106, 60, 0.15); }
+  @media (hover: none) and (pointer: coarse) {
+    .pad { display: flex; }
+    .note { display: none; }
+    body { justify-content: flex-start; padding-top: 8px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="screen" width="280" height="192" aria-label="Sammy Lightfoot game screen"></canvas>
+<div class="note">Arrows or A/D move &middot; Space jumps, holds ropes, starts elevators &middot; P pause &middot; M sound</div>
+<div class="pad">
+  <div>
+    <button data-action="left" aria-label="Move left">&lt;</button>
+    <button data-action="right" aria-label="Move right">&gt;</button>
+  </div>
+  <div>
+    <button class="jump" data-action="jump" aria-label="Jump">JUMP</button>
+  </div>
+</div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

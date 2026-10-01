@@ -1,0 +1,13 @@
+{
+  "name": "sammy-lightfoot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Fan remake of the 1983 Sierra circus platformer Sammy Lightfoot. Vanilla ES modules + Canvas 2D, no build step, all art and audio procedural.",
+  "scripts": {
+    "serve": "npx serve .",
+    "test": "node --test",
+    "sim": "node tools/simulate.mjs",
+    "smoke": "node tools/smoke.mjs"
+  }
+}
